@@ -93,3 +93,23 @@ set_connector_proxy()
 
     return 0
 }
+
+set_healthcheck()
+{
+    local app_dir="$1"
+    local appdir=${app_dir%/}
+    local app_path=$(basename "$app_dir")
+    local apppath="${app_path//#/\/}"
+
+    tee "$appdir/META-INF/context.xml" <<-'EOF'
+    <Context>
+        <Valve className="org.apache.catalina.valves.HealthCheckValve" />
+    </Context>
+EOF
+    if [ "$apppath" = "ROOT" ]; then
+        printf "http://localhost:8080/health" > "$HEALTH_URL_FILE"
+    else
+        printf "http://localhost:8080/%s/health" "$apppath" > "$HEALTH_URL_FILE"
+    fi
+    return 0
+}
