@@ -72,7 +72,7 @@ set_app_ctx_with_hc()
         local ctx_name="${app_path//\//#}"
     fi
 
-    local ctx_path="${CATALINA_BASE}/conf/Catalina/localhost/${ctx_name}.xml"
+    local ctx_path="${CATALINA_HOME}/conf/Catalina/localhost/${ctx_name}.xml"
     printf '<Context docBase="%s">\n    <Valve className="org.apache.catalina.valves.HealthCheckValve" />\n</Context>\n' "$app_dir" > "$ctx_path"
 
     if [ "$ctx_name" = "ROOT" ]; then
@@ -80,7 +80,7 @@ set_app_ctx_with_hc()
     else
         printf "http://localhost:8080/%s/health" "$app_path" > "$HEALTH_URL_FILE"
     fi
-    
+
     printf "%s" "$ctx_path"
 }
 
