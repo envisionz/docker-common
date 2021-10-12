@@ -73,6 +73,10 @@ set_app_ctx_with_hc()
     fi
 
     local ctx_path="${CATALINA_HOME}/conf/Catalina/localhost/${ctx_name}.xml"
+    
+    # Ensure the parent directory exists
+    mkdir -p "${CATALINA_HOME}/conf/Catalina/localhost"
+
     printf '<Context docBase="%s">\n    <Valve className="org.apache.catalina.valves.HealthCheckValve" />\n</Context>\n' "$app_dir" > "$ctx_path"
 
     if [ "$ctx_name" = "ROOT" ]; then
