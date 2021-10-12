@@ -73,9 +73,12 @@ set_app_ctx_with_hc()
     fi
 
     local ctx_path="${CATALINA_HOME}/conf/Catalina/localhost/${ctx_name}.xml"
-    
+
     # Ensure the parent directory exists
     mkdir -p "${CATALINA_HOME}/conf/Catalina/localhost"
+
+    # Delete any existing contexts if they exist, to account for container restarts
+    rm -f "${CATALINA_HOME}/conf/Catalina/localhost/*.xml"
 
     printf '<Context docBase="%s">\n    <Valve className="org.apache.catalina.valves.HealthCheckValve" />\n</Context>\n' "$app_dir" > "$ctx_path"
 
