@@ -62,6 +62,28 @@ set_app_path()
     exit 0
 }
 
+set_app_ctx_with_hc()
+{
+    local app_dir="$1"
+    local app_path="$2"
+    local ctx_name="ROOT"
+
+    if [ ! -z "$app_path" ]; then
+        local ctx_name="${app_path//\//#}"
+    fi
+
+    local ctx_path="${CATALINA_BASE}/conf/Catalina/localhost/${ctx_name}.xml"
+    printf '<Context docBase="%s">\n    <Valve className="org.apache.catalina.valves.HealthCheckValve" />\n</Context>\n' "$app_dir" > "$ctx_path"
+
+    if [ "$ctx_name" = "ROOT" ]; then
+        printf "http://localhost:8080/health" > "$HEALTH_URL_FILE"
+    else
+        printf "http://localhost:8080/%s/health" "$app_path" > "$HEALTH_URL_FILE"
+    fi
+    
+    printf "%s" "$ctx_path"
+}
+
 # Setup tomcat connector when behind reverse proxy
 set_connector_proxy()
 {
